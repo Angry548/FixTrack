@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const detallePreventivoSchema = new mongoose.Schema(
   {
@@ -67,6 +67,15 @@ const mantenimientoSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Empleado',
       required: [true, 'El empleado que reporta es obligatorio']
+    },
+
+    // Proveedor externo encargado del mantenimiento (opcional).
+    // No todos los mantenimientos requieren un proveedor externo,
+    // por ejemplo cuando lo resuelve personal interno.
+    proveedorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Proveedor',
+      default: null
     },
 
     tipo: {
@@ -205,4 +214,4 @@ mantenimientoSchema.pre('validate', function (next) {
   next();
 });
 
-module.exports = mongoose.model('Mantenimiento', mantenimientoSchema);
+export default mongoose.model('Mantenimiento', mantenimientoSchema);
