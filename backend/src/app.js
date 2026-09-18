@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import empresaRoutes from "./routes/empresa.routes.js";
+import departamentoRoutes from "./routes/departamento.routes.js";
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 // ==============================
 
 app.use("/api/v1/empresas", empresaRoutes);
+app.use("/api/v1/departamentos",departamentoRoutes);
 
 // ==============================
 // Middleware para rutas inexistentes
