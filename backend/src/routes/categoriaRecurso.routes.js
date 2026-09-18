@@ -1,7 +1,7 @@
 import express from "express";
 
 import {
-  getCategoriasRecurso,
+  getCategoriaRecurso,
   getCategoriaRecursoById,
   createCategoriaRecurso,
   updateCategoriaRecurso,
@@ -11,7 +11,7 @@ import {
 const router = express.Router();
 
 // GET - Obtener todas las categorías de recursos
-router.get("/", getCategoriasRecurso);
+router.get("/", getCategoriaRecurso);
 
 // GET - Obtener categoría de recurso por ID
 router.get("/:id", getCategoriaRecursoById);

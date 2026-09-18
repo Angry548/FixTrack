@@ -1,30 +1,27 @@
 import mongoose from "mongoose";
 
-const grupoRecursosSchema = new mongoose.Schema(
+const grupoRecursoSchema = new mongoose.Schema(
   {
     nombre: {
       type: String,
       required: [true, "El nombre del grupo es obligatorio"],
       trim: true,
       minlength: [2, "El nombre debe tener al menos 2 caracteres"],
-      maxlength: [150, "El nombre no puede superar 150 caracteres"],
+      maxlength: [100, "El nombre no puede superar 100 caracteres"],
     },
 
     descripcion: {
       type: String,
       trim: true,
-      maxlength: [500, "La descripción no puede superar 500 caracteres"],
+      maxlength: [300, "La descripción no puede superar 300 caracteres"],
     },
 
-    recursosAsociados: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Recurso",
-        },
-      ],
-      default: [],
-    },
+    recursosAsociados: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Recurso",
+      },
+    ],
 
     activo: {
       type: Boolean,
@@ -36,6 +33,7 @@ const grupoRecursosSchema = new mongoose.Schema(
   }
 );
 
-const GrupoRecursos = mongoose.model("GrupoRecursos", grupoRecursosSchema);
+// Se corrige "grupoRecursosSchema" por "grupoRecursoSchema"
+const GrupoRecurso = mongoose.model("GrupoRecurso", grupoRecursoSchema);
 
-export default GrupoRecursos;
+export default GrupoRecurso;

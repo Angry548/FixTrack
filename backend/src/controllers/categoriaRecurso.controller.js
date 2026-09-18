@@ -1,7 +1,7 @@
 import * as categoriaRecursoService from "../services/categoriaRecurso.service.js";
 
 // GET /api/v1/categorias-recurso
-const getCategoriasRecurso = async (req, res, next) => {
+const getCategoriaRecurso = async (req, res, next) => {
   try {
     const categorias = await categoriaRecursoService.obtenerTodas();
 
@@ -85,7 +85,7 @@ const deleteCategoriaRecurso = async (req, res, next) => {
 };
 
 export {
-  getCategoriasRecurso,
+  getCategoriaRecurso,
   getCategoriaRecursoById,
   createCategoriaRecurso,
   updateCategoriaRecurso,
