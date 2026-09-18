@@ -1,37 +1,39 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const areaSchema = new mongoose.Schema(
   {
     nombre: {
       type: String,
-      required: [true, 'El nombre del área es obligatorio'],
+      required: [true, "El nombre del área es obligatorio"],
       trim: true,
-      minlength: [2, 'El nombre debe tener al menos 2 caracteres'],
-      maxlength: [100, 'El nombre no puede superar 100 caracteres']
+      minlength: [2, "El nombre debe tener al menos 2 caracteres"],
+      maxlength: [100, "El nombre no puede superar 100 caracteres"],
     },
 
     descripcion: {
       type: String,
       trim: true,
-      maxlength: [300, 'La descripción no puede superar 300 caracteres']
+      maxlength: [300, "La descripción no puede superar 300 caracteres"],
     },
 
     ubicacion: {
       type: String,
-      required: [true, 'La ubicación es obligatoria'],
+      required: [true, "La ubicación del área es obligatoria"],
       trim: true,
-      maxlength: [200, 'La ubicación no puede superar 200 caracteres']
+      maxlength: [200, "La ubicación no puede superar 200 caracteres"],
     },
 
     departamentoId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Departamento',
-      required: [true, 'El departamento es obligatorio']
-    }
+      ref: "Departamento",
+      required: [true, "El departamento es obligatorio"],
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model('Area', areaSchema);
+const Area = mongoose.model("Area", areaSchema);
+
+export default Area;

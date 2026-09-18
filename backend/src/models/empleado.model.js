@@ -1,31 +1,26 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const asignacionSchema = new mongoose.Schema(
   {
     recursoId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Recurso',
-      required: [true, 'El recurso es obligatorio']
+      ref: "Recurso",
+      required: [true, "El recurso es obligatorio"],
     },
 
     cantidad: {
       type: Number,
-      required: [true, 'La cantidad es obligatoria'],
-      min: [1, 'La cantidad debe ser mayor que 0'],
-      validate: {
-        validator: Number.isInteger,
-        message: 'La cantidad debe ser un número entero'
-      }
+      required: [true, "La cantidad asignada es obligatoria"],
+      min: [1, "La cantidad debe ser mayor a 0"],
     },
 
     fechaAsignacion: {
       type: Date,
-      required: [true, 'La fecha de asignación es obligatoria'],
-      default: Date.now
-    }
+      default: Date.now,
+    },
   },
   {
-    _id: true
+    _id: true,
   }
 );
 
@@ -33,73 +28,72 @@ const empleadoSchema = new mongoose.Schema(
   {
     nombres: {
       type: String,
-      required: [true, 'Los nombres son obligatorios'],
+      required: [true, "Los nombres del empleado son obligatorios"],
       trim: true,
-      minlength: [2, 'Los nombres deben tener al menos 2 caracteres'],
-      maxlength: [100, 'Los nombres no pueden superar 100 caracteres']
+      minlength: [2, "Los nombres deben tener al menos 2 caracteres"],
+      maxlength: [100, "Los nombres no pueden superar 100 caracteres"],
     },
 
     apellidos: {
       type: String,
-      required: [true, 'Los apellidos son obligatorios'],
+      required: [true, "Los apellidos del empleado son obligatorios"],
       trim: true,
-      minlength: [2, 'Los apellidos deben tener al menos 2 caracteres'],
-      maxlength: [100, 'Los apellidos no pueden superar 100 caracteres']
+      minlength: [2, "Los apellidos deben tener al menos 2 caracteres"],
+      maxlength: [100, "Los apellidos no pueden superar 100 caracteres"],
     },
 
     codigoEmpleado: {
       type: String,
-      required: [true, 'El código del empleado es obligatorio'],
+      required: [true, "El código del empleado es obligatorio"],
       unique: true,
       trim: true,
-      maxlength: [50, 'El código no puede superar 50 caracteres']
+      uppercase: true,
+      maxlength: [50, "El código no puede superar 50 caracteres"],
     },
 
     correo: {
       type: String,
-      required: [true, 'El correo es obligatorio'],
+      required: [true, "El correo del empleado es obligatorio"],
       unique: true,
       trim: true,
       lowercase: true,
-      match: [
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-        'Debe proporcionar un correo electrónico válido'
-      ]
+      maxlength: [150, "El correo no puede superar 150 caracteres"],
     },
 
     telefono: {
       type: String,
-      required: [true, 'El teléfono es obligatorio'],
       trim: true,
-      maxlength: [20, 'El teléfono no puede superar 20 caracteres']
+      maxlength: [20, "El teléfono no puede superar 20 caracteres"],
     },
 
     cargo: {
       type: String,
-      required: [true, 'El cargo es obligatorio'],
+      required: [true, "El cargo del empleado es obligatorio"],
       trim: true,
-      maxlength: [100, 'El cargo no puede superar 100 caracteres']
+      maxlength: [100, "El cargo no puede superar 100 caracteres"],
     },
 
     areaId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Area',
-      required: [true, 'El área es obligatoria']
+      ref: "Area",
+      required: [true, "El área es obligatoria"],
     },
 
     activo: {
       type: Boolean,
-      default: true
+      default: true,
     },
 
     asignaciones: {
       type: [asignacionSchema],
-      default: []
-    }
+      default: [],
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model('Empleado', empleadoSchema);
+const Empleado = mongoose.model("Empleado", empleadoSchema);
+
+export default Empleado;

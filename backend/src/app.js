@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 
 import empresaRoutes from "./routes/empresa.routes.js";
+import departamentoRoutes from "./routes/departamento.routes.js";
+import areaRoutes from "./routes/area.routes.js";
+import empleadoRoutes from "./routes/empleado.routes.js";
 
 const app = express();
 
@@ -29,6 +32,9 @@ app.get("/", (req, res) => {
 // ==============================
 
 app.use("/api/v1/empresas", empresaRoutes);
+app.use("/api/v1/departamentos",departamentoRoutes);
+app.use("/api/v1/areas", areaRoutes);
+app.use("/api/v1/empleados", empleadoRoutes);
 
 // ==============================
 // Middleware para rutas inexistentes
