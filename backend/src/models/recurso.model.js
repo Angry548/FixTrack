@@ -15,6 +15,7 @@ const recursoSchema = new mongoose.Schema(
       required: [true, "El código del recurso es obligatorio"],
       unique: true,
       trim: true,
+      uppercase: true,
       maxlength: [50, "El código no puede superar 50 caracteres"],
     },
 
@@ -92,8 +93,34 @@ const recursoSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+// Propiedad virtual para calcular la cantidad disponible en tiempo real
+recursoSchema.virtual("cantidadDisponible").get(function () {
+  return (
+    this.existenciaTotal -
+    (this.cantidadPrestada +
+      this.cantidadEnReparacion +
+      this.cantidadDesecho)
+  );
+});
+
+// Hook pre-save corregido con async/await (sin parámetro next ni llamada a next())
+recursoSchema.pre("save", async function () {
+  const sumaEstados =
+    this.cantidadPrestada +
+    this.cantidadEnReparacion +
+    this.cantidadDesecho;
+
+  if (sumaEstados > this.existenciaTotal) {
+    throw new Error(
+      "La suma de las cantidades (prestada, reparación, desecho) no puede superar la existencia total"
+    );
+  }
+});
 
 const Recurso = mongoose.model("Recurso", recursoSchema);
 
