@@ -9,27 +9,38 @@ import {
   getDepartamentosByEmpresa,
 } from "../controllers/departamento.controller.js";
 
+import { autenticar } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/roles.middleware.js";
+
 const router = express.Router();
 
-// Obtener todos
+router.use(autenticar);
+
 router.get("/", getDepartamentos);
 
-// Obtener departamentos pertenecientes a una empresa
 router.get(
   "/empresa/:empresaId",
   getDepartamentosByEmpresa
 );
 
-// Obtener uno por ID
 router.get("/:id", getDepartamentoById);
 
-// Crear
-router.post("/", createDepartamento);
+router.post(
+  "/",
+  autorizarRoles("administrador"),
+  createDepartamento
+);
 
-// Actualizar
-router.put("/:id", updateDepartamento);
+router.put(
+  "/:id",
+  autorizarRoles("administrador"),
+  updateDepartamento
+);
 
-// Eliminar
-router.delete("/:id", deleteDepartamento);
+router.delete(
+  "/:id",
+  autorizarRoles("administrador"),
+  deleteDepartamento
+);
 
 export default router;

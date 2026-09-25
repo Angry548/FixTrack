@@ -8,21 +8,33 @@ import {
   deleteGrupoRecurso,
 } from "../controllers/grupoRecurso.controller.js";
 
+import { autenticar } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/roles.middleware.js";
+
 const router = express.Router();
 
-// GET - Obtener todos los grupos de recursos
+router.use(autenticar);
+
 router.get("/", getGrupoRecurso);
 
-// GET - Obtener grupo de recurso por ID
 router.get("/:id", getGrupoRecursoById);
 
-// POST - Crear grupo de recurso
-router.post("/", createGrupoRecurso);
+router.post(
+  "/",
+  autorizarRoles("administrador", "inventario"),
+  createGrupoRecurso
+);
 
-// PUT - Actualizar grupo de recurso
-router.put("/:id", updateGrupoRecurso);
+router.put(
+  "/:id",
+  autorizarRoles("administrador", "inventario"),
+  updateGrupoRecurso
+);
 
-// DELETE - Eliminar grupo de recurso
-router.delete("/:id", deleteGrupoRecurso);
+router.delete(
+  "/:id",
+  autorizarRoles("administrador", "inventario"),
+  deleteGrupoRecurso
+);
 
 export default router;

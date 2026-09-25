@@ -10,27 +10,44 @@ import {
   assignRecurso,
 } from "../controllers/empleado.controller.js";
 
+import { autenticar } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/roles.middleware.js";
+
 const router = express.Router();
 
-// Obtener todos
+router.use(autenticar);
+
 router.get("/", getEmpleados);
 
-// Obtener empleados de un área
-router.get("/area/:areaId", getEmpleadosByArea);
+router.get(
+  "/area/:areaId",
+  getEmpleadosByArea
+);
 
-// Obtener empleado por ID
 router.get("/:id", getEmpleadoById);
 
-// Crear empleado
-router.post("/", createEmpleado);
+router.post(
+  "/",
+  autorizarRoles("administrador"),
+  createEmpleado
+);
 
-// Asignar recurso
-router.post("/:id/asignaciones", assignRecurso);
+router.post(
+  "/:id/asignaciones",
+  autorizarRoles("administrador"),
+  assignRecurso
+);
 
-// Actualizar empleado
-router.put("/:id", updateEmpleado);
+router.put(
+  "/:id",
+  autorizarRoles("administrador"),
+  updateEmpleado
+);
 
-// Eliminar empleado
-router.delete("/:id", deleteEmpleado);
+router.delete(
+  "/:id",
+  autorizarRoles("administrador"),
+  deleteEmpleado
+);
 
 export default router;

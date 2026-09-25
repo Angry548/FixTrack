@@ -8,21 +8,33 @@ import {
   deleteCategoriaRecurso,
 } from "../controllers/categoriaRecurso.controller.js";
 
+import { autenticar } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/roles.middleware.js";
+
 const router = express.Router();
 
-// GET - Obtener todas las categorías de recursos
+router.use(autenticar);
+
 router.get("/", getCategoriaRecurso);
 
-// GET - Obtener categoría de recurso por ID
 router.get("/:id", getCategoriaRecursoById);
 
-// POST - Crear categoría de recurso
-router.post("/", createCategoriaRecurso);
+router.post(
+  "/",
+  autorizarRoles("administrador", "inventario"),
+  createCategoriaRecurso
+);
 
-// PUT - Actualizar categoría de recurso
-router.put("/:id", updateCategoriaRecurso);
+router.put(
+  "/:id",
+  autorizarRoles("administrador", "inventario"),
+  updateCategoriaRecurso
+);
 
-// DELETE - Eliminar categoría de recurso
-router.delete("/:id", deleteCategoriaRecurso);
+router.delete(
+  "/:id",
+  autorizarRoles("administrador", "inventario"),
+  deleteCategoriaRecurso
+);
 
 export default router;

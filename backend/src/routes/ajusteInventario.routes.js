@@ -9,7 +9,12 @@ import {
   getAjustesByCategoria,
 } from "../controllers/ajusteInventario.controller.js";
 
+import { autenticar } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/roles.middleware.js";
+
 const router = express.Router();
+
+router.use(autenticar);
 
 router.get("/", getAjustesInventario);
 
@@ -20,10 +25,22 @@ router.get(
 
 router.get("/:id", getAjusteInventarioById);
 
-router.post("/", createAjusteInventario);
+router.post(
+  "/",
+  autorizarRoles("administrador", "inventario"),
+  createAjusteInventario
+);
 
-router.put("/:id", updateAjusteInventario);
+router.put(
+  "/:id",
+  autorizarRoles("administrador", "inventario"),
+  updateAjusteInventario
+);
 
-router.delete("/:id", deleteAjusteInventario);
+router.delete(
+  "/:id",
+  autorizarRoles("administrador", "inventario"),
+  deleteAjusteInventario
+);
 
 export default router;

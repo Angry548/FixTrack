@@ -1,18 +1,38 @@
 import { Router } from "express";
 import * as mantenimientoController from "../controllers/mantenimiento.controller.js";
+import { autenticar } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/roles.middleware.js";
 
 const router = Router();
 
-// CRUD básico según la guía del proyecto
-router.post("/", mantenimientoController.crear);
-router.get("/", mantenimientoController.obtenerTodos);
-router.get("/:id", mantenimientoController.obtenerPorId);
-router.put("/:id", mantenimientoController.actualizar);
-router.delete("/:id", mantenimientoController.eliminar);
+router.use(autenticar);
+
+router.get(
+  "/",
+  mantenimientoController.obtenerTodos
+);
+
+router.get(
+  "/:id",
+  mantenimientoController.obtenerPorId
+);
+
+router.post(
+  "/",
+  autorizarRoles("administrador", "tecnico"),
+  mantenimientoController.crear
+);
+
+router.put(
+  "/:id",
+  autorizarRoles("administrador", "tecnico"),
+  mantenimientoController.actualizar
+);
+
+router.delete(
+  "/:id",
+  autorizarRoles("administrador"),
+  mantenimientoController.eliminar
+);
 
 export default router;
-
-// NOTA IMPORTANTE:
-// Angel será quien registre esta ruta en app.js, así:
-// import mantenimientoRoutes from "./routes/mantenimiento.routes.js";
-// app.use("/api/v1/mantenimientos", mantenimientoRoutes);

@@ -1,5 +1,11 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+
+import authRoutes from "./routes/auth.routes.js";
+import usuarioRoutes from "./routes/usuario.routes.js";
 
 import empresaRoutes from "./routes/empresa.routes.js";
 import departamentoRoutes from "./routes/departamento.routes.js";
@@ -18,8 +24,38 @@ import ajusteInventarioRoutes from "./routes/ajusteInventario.routes.js";
 
 const app = express();
 
-app.use(cors());
+app.set("trust proxy", 1);
+
+app.use(helmet());
+
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
+
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+
+app.use(cookieParser());
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message:
+      "Demasiadas solicitudes de autenticación. Intente nuevamente más tarde",
+  },
+});
 
 app.get("/", (req, res) => {
   return res.status(200).json({
@@ -29,20 +65,71 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/api/v1/empresas", empresaRoutes);
-app.use("/api/v1/departamentos", departamentoRoutes);
-app.use("/api/v1/areas", areaRoutes);
-app.use("/api/v1/empleados", empleadoRoutes);
+app.use(
+  "/api/v1/auth",
+  authLimiter,
+  authRoutes
+);
 
-app.use("/api/v1/grupos-recursos", grupoRecursoRoutes);
-app.use("/api/v1/categorias-recursos", categoriaRecursoRoutes);
-app.use("/api/v1/recursos", recursoRoutes);
+app.use(
+  "/api/v1/usuarios",
+  usuarioRoutes
+);
 
-app.use("/api/v1/proveedores", proveedorRoutes);
-app.use("/api/v1/mantenimientos", mantenimientoRoutes);
+app.use(
+  "/api/v1/empresas",
+  empresaRoutes
+);
 
-app.use("/api/v1/categorias-ajustes", categoriaAjusteRoutes);
-app.use("/api/v1/ajustes-inventario", ajusteInventarioRoutes);
+app.use(
+  "/api/v1/departamentos",
+  departamentoRoutes
+);
+
+app.use(
+  "/api/v1/areas",
+  areaRoutes
+);
+
+app.use(
+  "/api/v1/empleados",
+  empleadoRoutes
+);
+
+app.use(
+  "/api/v1/grupos-recursos",
+  grupoRecursoRoutes
+);
+
+app.use(
+  "/api/v1/categorias-recursos",
+  categoriaRecursoRoutes
+);
+
+app.use(
+  "/api/v1/recursos",
+  recursoRoutes
+);
+
+app.use(
+  "/api/v1/proveedores",
+  proveedorRoutes
+);
+
+app.use(
+  "/api/v1/mantenimientos",
+  mantenimientoRoutes
+);
+
+app.use(
+  "/api/v1/categorias-ajustes",
+  categoriaAjusteRoutes
+);
+
+app.use(
+  "/api/v1/ajustes-inventario",
+  ajusteInventarioRoutes
+);
 
 app.use((req, res) => {
   return res.status(404).json({
@@ -55,9 +142,9 @@ app.use((error, req, res, next) => {
   console.error(error);
 
   if (error.name === "ValidationError") {
-    const errores = Object.values(error.errors).map(
-      (err) => err.message
-    );
+    const errores = Object.values(
+      error.errors
+    ).map((err) => err.message);
 
     return res.status(400).json({
       success: false,
@@ -69,12 +156,15 @@ app.use((error, req, res, next) => {
   if (error.name === "CastError") {
     return res.status(400).json({
       success: false,
-      message: "El identificador proporcionado no es válido",
+      message:
+        "El identificador proporcionado no es válido",
     });
   }
 
   if (error.code === 11000) {
-    const campo = Object.keys(error.keyValue || {})[0];
+    const campo = Object.keys(
+      error.keyValue || {}
+    )[0];
 
     return res.status(409).json({
       success: false,
@@ -84,9 +174,23 @@ app.use((error, req, res, next) => {
     });
   }
 
-  return res.status(error.statusCode || 500).json({
+  if (
+    error.name === "JsonWebTokenError" ||
+    error.name === "TokenExpiredError"
+  ) {
+    return res.status(401).json({
+      success: false,
+      message: "Token inválido o expirado",
+    });
+  }
+
+  return res.status(
+    error.statusCode || 500
+  ).json({
     success: false,
-    message: error.message || "Error interno del servidor",
+    message:
+      error.message ||
+      "Error interno del servidor",
   });
 });
 

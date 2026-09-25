@@ -8,21 +8,33 @@ import {
   deleteRecurso,
 } from "../controllers/recurso.controller.js";
 
+import { autenticar } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/roles.middleware.js";
+
 const router = express.Router();
 
-// GET - Obtener todos los recursos
+router.use(autenticar);
+
 router.get("/", getRecurso);
 
-// GET - Obtener recurso por ID
 router.get("/:id", getRecursoById);
 
-// POST - Crear recurso
-router.post("/", createRecurso);
+router.post(
+  "/",
+  autorizarRoles("administrador", "inventario"),
+  createRecurso
+);
 
-// PUT - Actualizar recurso
-router.put("/:id", updateRecurso);
+router.put(
+  "/:id",
+  autorizarRoles("administrador", "inventario"),
+  updateRecurso
+);
 
-// DELETE - Eliminar recurso
-router.delete("/:id", deleteRecurso);
+router.delete(
+  "/:id",
+  autorizarRoles("administrador", "inventario"),
+  deleteRecurso
+);
 
 export default router;

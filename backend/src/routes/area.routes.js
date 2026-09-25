@@ -9,27 +9,38 @@ import {
   getAreasByDepartamento,
 } from "../controllers/area.controller.js";
 
+import { autenticar } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/roles.middleware.js";
+
 const router = express.Router();
 
-// Obtener todas las áreas
+router.use(autenticar);
+
 router.get("/", getAreas);
 
-// Obtener áreas pertenecientes a un departamento
 router.get(
   "/departamento/:departamentoId",
   getAreasByDepartamento
 );
 
-// Obtener área por ID
 router.get("/:id", getAreaById);
 
-// Crear área
-router.post("/", createArea);
+router.post(
+  "/",
+  autorizarRoles("administrador"),
+  createArea
+);
 
-// Actualizar área
-router.put("/:id", updateArea);
+router.put(
+  "/:id",
+  autorizarRoles("administrador"),
+  updateArea
+);
 
-// Eliminar área
-router.delete("/:id", deleteArea);
+router.delete(
+  "/:id",
+  autorizarRoles("administrador"),
+  deleteArea
+);
 
 export default router;

@@ -1,14 +1,16 @@
 import * as mantenimientoService from "../services/mantenimiento.service.js";
 
-// El Controller NO debe hacer consultas directas a MongoDB.
-// Solo recibe req, extrae datos y llama al Service.
-
 export const crear = async (req, res, next) => {
   try {
     const mantenimiento = await mantenimientoService.crearMantenimiento(
       req.body
     );
-    res.status(201).json(mantenimiento);
+
+    return res.status(201).json({
+      success: true,
+      message: "Mantenimiento creado correctamente",
+      data: mantenimiento,
+    });
   } catch (error) {
     next(error);
   }
@@ -17,7 +19,13 @@ export const crear = async (req, res, next) => {
 export const obtenerTodos = async (req, res, next) => {
   try {
     const mantenimientos = await mantenimientoService.obtenerMantenimientos();
-    res.status(200).json(mantenimientos);
+
+    return res.status(200).json({
+      success: true,
+      message: "Mantenimientos obtenidos correctamente",
+      count: mantenimientos.length,
+      data: mantenimientos,
+    });
   } catch (error) {
     next(error);
   }
@@ -30,10 +38,17 @@ export const obtenerPorId = async (req, res, next) => {
     );
 
     if (!mantenimiento) {
-      return res.status(404).json({ mensaje: "Mantenimiento no encontrado" });
+      return res.status(404).json({
+        success: false,
+        message: "Mantenimiento no encontrado",
+      });
     }
 
-    res.status(200).json(mantenimiento);
+    return res.status(200).json({
+      success: true,
+      message: "Mantenimiento obtenido correctamente",
+      data: mantenimiento,
+    });
   } catch (error) {
     next(error);
   }
@@ -47,10 +62,17 @@ export const actualizar = async (req, res, next) => {
     );
 
     if (!mantenimiento) {
-      return res.status(404).json({ mensaje: "Mantenimiento no encontrado" });
+      return res.status(404).json({
+        success: false,
+        message: "Mantenimiento no encontrado",
+      });
     }
 
-    res.status(200).json(mantenimiento);
+    return res.status(200).json({
+      success: true,
+      message: "Mantenimiento actualizado correctamente",
+      data: mantenimiento,
+    });
   } catch (error) {
     next(error);
   }
@@ -63,10 +85,17 @@ export const eliminar = async (req, res, next) => {
     );
 
     if (!mantenimiento) {
-      return res.status(404).json({ mensaje: "Mantenimiento no encontrado" });
+      return res.status(404).json({
+        success: false,
+        message: "Mantenimiento no encontrado",
+      });
     }
 
-    res.status(200).json({ mensaje: "Mantenimiento eliminado correctamente" });
+    return res.status(200).json({
+      success: true,
+      message: "Mantenimiento eliminado correctamente",
+      data: mantenimiento,
+    });
   } catch (error) {
     next(error);
   }

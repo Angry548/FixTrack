@@ -144,7 +144,8 @@ const mantenimientoSchema = new mongoose.Schema(
 /*
  * Validaciones relacionadas entre campos.
  */
-mantenimientoSchema.pre('validate', function (next) {
+
+mantenimientoSchema.pre('validate', function () {
   if (this.fechaInicio && this.fechaInicio < this.fechaCreacion) {
     this.invalidate(
       'fechaInicio',
@@ -210,8 +211,6 @@ mantenimientoSchema.pre('validate', function (next) {
       );
     }
   }
-
-  next();
 });
 
 export default mongoose.model('Mantenimiento', mantenimientoSchema);

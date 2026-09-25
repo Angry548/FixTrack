@@ -1,18 +1,32 @@
 import { Router } from "express";
 import * as proveedorController from "../controllers/proveedor.controller.js";
+import { autenticar } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/roles.middleware.js";
 
 const router = Router();
 
-// CRUD básico según la guía del proyecto
-router.post("/", proveedorController.crear);
+router.use(autenticar);
+
 router.get("/", proveedorController.obtenerTodos);
+
 router.get("/:id", proveedorController.obtenerPorId);
-router.put("/:id", proveedorController.actualizar);
-router.delete("/:id", proveedorController.eliminar);
+
+router.post(
+  "/",
+  autorizarRoles("administrador", "inventario"),
+  proveedorController.crear
+);
+
+router.put(
+  "/:id",
+  autorizarRoles("administrador", "inventario"),
+  proveedorController.actualizar
+);
+
+router.delete(
+  "/:id",
+  autorizarRoles("administrador", "inventario"),
+  proveedorController.eliminar
+);
 
 export default router;
-
-// NOTA IMPORTANTE:
-// Angel será quien registre esta ruta en app.js, así:
-// import proveedorRoutes from "./routes/proveedor.routes.js";
-// app.use("/api/v1/proveedores", proveedorRoutes);

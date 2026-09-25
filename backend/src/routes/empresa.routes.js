@@ -8,21 +8,33 @@ import {
   deleteEmpresa,
 } from "../controllers/empresa.controller.js";
 
+import { autenticar } from "../middlewares/auth.middleware.js";
+import { autorizarRoles } from "../middlewares/roles.middleware.js";
+
 const router = express.Router();
 
-// GET - Obtener todas las empresas
+router.use(autenticar);
+
 router.get("/", getEmpresas);
 
-// GET - Obtener empresa por ID
 router.get("/:id", getEmpresaById);
 
-// POST - Crear empresa
-router.post("/", createEmpresa);
+router.post(
+  "/",
+  autorizarRoles("administrador"),
+  createEmpresa
+);
 
-// PUT - Actualizar empresa
-router.put("/:id", updateEmpresa);
+router.put(
+  "/:id",
+  autorizarRoles("administrador"),
+  updateEmpresa
+);
 
-// DELETE - Eliminar empresa
-router.delete("/:id", deleteEmpresa);
+router.delete(
+  "/:id",
+  autorizarRoles("administrador"),
+  deleteEmpresa
+);
 
 export default router;

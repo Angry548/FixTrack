@@ -1,12 +1,14 @@
 import * as proveedorService from "../services/proveedor.service.js";
 
-// El Controller NO debe hacer consultas directas a MongoDB.
-// Solo recibe req, extrae datos y llama al Service.
-
 export const crear = async (req, res, next) => {
   try {
     const proveedor = await proveedorService.crearProveedor(req.body);
-    res.status(201).json(proveedor);
+
+    return res.status(201).json({
+      success: true,
+      message: "Proveedor creado correctamente",
+      data: proveedor,
+    });
   } catch (error) {
     next(error);
   }
@@ -15,7 +17,13 @@ export const crear = async (req, res, next) => {
 export const obtenerTodos = async (req, res, next) => {
   try {
     const proveedores = await proveedorService.obtenerProveedores();
-    res.status(200).json(proveedores);
+
+    return res.status(200).json({
+      success: true,
+      message: "Proveedores obtenidos correctamente",
+      count: proveedores.length,
+      data: proveedores,
+    });
   } catch (error) {
     next(error);
   }
@@ -28,10 +36,17 @@ export const obtenerPorId = async (req, res, next) => {
     );
 
     if (!proveedor) {
-      return res.status(404).json({ mensaje: "Proveedor no encontrado" });
+      return res.status(404).json({
+        success: false,
+        message: "Proveedor no encontrado",
+      });
     }
 
-    res.status(200).json(proveedor);
+    return res.status(200).json({
+      success: true,
+      message: "Proveedor obtenido correctamente",
+      data: proveedor,
+    });
   } catch (error) {
     next(error);
   }
@@ -45,10 +60,17 @@ export const actualizar = async (req, res, next) => {
     );
 
     if (!proveedor) {
-      return res.status(404).json({ mensaje: "Proveedor no encontrado" });
+      return res.status(404).json({
+        success: false,
+        message: "Proveedor no encontrado",
+      });
     }
 
-    res.status(200).json(proveedor);
+    return res.status(200).json({
+      success: true,
+      message: "Proveedor actualizado correctamente",
+      data: proveedor,
+    });
   } catch (error) {
     next(error);
   }
@@ -61,10 +83,17 @@ export const eliminar = async (req, res, next) => {
     );
 
     if (!proveedor) {
-      return res.status(404).json({ mensaje: "Proveedor no encontrado" });
+      return res.status(404).json({
+        success: false,
+        message: "Proveedor no encontrado",
+      });
     }
 
-    res.status(200).json({ mensaje: "Proveedor eliminado correctamente" });
+    return res.status(200).json({
+      success: true,
+      message: "Proveedor eliminado correctamente",
+      data: proveedor,
+    });
   } catch (error) {
     next(error);
   }
