@@ -2,14 +2,55 @@ import * as empleadoService from "../services/empleado.service.js";
 
 const getEmpleados = async (req, res, next) => {
   try {
-    const empleados = await empleadoService.obtenerTodos();
+    const {
+      nombres = "",
+      apellidos = "",
+      codigoEmpleado = "",
+      correo = "",
+      telefono = "",
+      cargo = "",
+      areaId = "",
+      activo = "",
+      soloTecnicos = "",
+      search = "",
+      page,
+      limit,
+    } = req.query;
 
-    return res.status(200).json({
+    const resultado = await empleadoService.obtenerTodos({
+      nombres,
+      apellidos,
+      codigoEmpleado,
+      correo,
+      telefono,
+      cargo,
+      areaId,
+      activo,
+      soloTecnicos,
+      search,
+      page,
+      limit,
+    });
+
+    const respuesta = {
       success: true,
       message: "Empleados obtenidos correctamente",
-      count: empleados.length,
-      data: empleados,
-    });
+      count: resultado.registros.length,
+      data: resultado.registros,
+    };
+
+    if (resultado.paginado) {
+      respuesta.pagination = {
+        page: resultado.page,
+        limit: resultado.limit,
+        total: resultado.total,
+        totalPages: resultado.totalPages,
+        hasPrevPage: resultado.page > 1,
+        hasNextPage: resultado.page < resultado.totalPages,
+      };
+    }
+
+    return res.status(200).json(respuesta);
   } catch (error) {
     next(error);
   }
@@ -66,7 +107,9 @@ const updateEmpleado = async (req, res, next) => {
 
 const deleteEmpleado = async (req, res, next) => {
   try {
-    await empleadoService.eliminar(req.params.id);
+    await empleadoService.eliminar(
+      req.params.id
+    );
 
     return res.status(200).json({
       success: true,
@@ -111,6 +154,23 @@ const assignRecurso = async (req, res, next) => {
   }
 };
 
+const returnRecurso = async (req, res, next) => {
+  try {
+    const empleado = await empleadoService.devolverRecurso(
+      req.params.id,
+      req.params.asignacionId
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Recurso devuelto correctamente",
+      data: empleado,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   getEmpleados,
   getEmpleadoById,
@@ -119,4 +179,5 @@ export {
   deleteEmpleado,
   getEmpleadosByArea,
   assignRecurso,
+  returnRecurso,
 };

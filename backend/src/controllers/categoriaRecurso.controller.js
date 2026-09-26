@@ -1,84 +1,164 @@
 import * as categoriaRecursoService from "../services/categoriaRecurso.service.js";
 
-// GET /api/v1/categorias-recurso
-const getCategoriaRecurso = async (req, res, next) => {
+const getCategoriaRecurso = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const categorias = await categoriaRecursoService.obtenerTodas();
+    const {
+      nombre = "",
+      descripcion = "",
+      activo = "",
+      search = "",
+      page,
+      limit,
+    } = req.query;
 
-    return res.status(200).json({
+    const resultado =
+      await categoriaRecursoService.obtenerTodas({
+        nombre,
+        descripcion,
+        activo,
+        search,
+        page,
+        limit,
+      });
+
+    const respuesta = {
       success: true,
-      message: "Categorías de recurso obtenidas correctamente",
-      count: categorias.length,
-      data: categorias,
-    });
+      message:
+        "Categorías de recurso obtenidas correctamente",
+      count:
+        resultado.registros.length,
+      data:
+        resultado.registros,
+    };
+
+    if (resultado.paginado) {
+      respuesta.pagination = {
+        page:
+          resultado.page,
+        limit:
+          resultado.limit,
+        total:
+          resultado.total,
+        totalPages:
+          resultado.totalPages,
+        hasPrevPage:
+          resultado.page > 1,
+        hasNextPage:
+          resultado.page <
+          resultado.totalPages,
+      };
+    }
+
+    return res
+      .status(200)
+      .json(respuesta);
   } catch (error) {
     next(error);
   }
 };
 
-// GET /api/v1/categorias-recurso/:id
-const getCategoriaRecursoById = async (req, res, next) => {
+const getCategoriaRecursoById = async (
+  req,
+  res,
+  next
+) => {
   try {
     const { id } = req.params;
 
-    const categoria = await categoriaRecursoService.obtenerPorId(id);
+    const categoria =
+      await categoriaRecursoService.obtenerPorId(
+        id
+      );
 
-    return res.status(200).json({
-      success: true,
-      message: "Categoría de recurso obtenida correctamente",
-      data: categoria,
-    });
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message:
+          "Categoría de recurso obtenida correctamente",
+        data: categoria,
+      });
   } catch (error) {
     next(error);
   }
 };
 
-// POST /api/v1/categorias-recurso
-const createCategoriaRecurso = async (req, res, next) => {
+const createCategoriaRecurso = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const nuevaCategoria = await categoriaRecursoService.crear(req.body);
+    const nuevaCategoria =
+      await categoriaRecursoService.crear(
+        req.body
+      );
 
-    return res.status(201).json({
-      success: true,
-      message: "Categoría de recurso creada correctamente",
-      data: nuevaCategoria,
-    });
+    return res
+      .status(201)
+      .json({
+        success: true,
+        message:
+          "Categoría de recurso creada correctamente",
+        data:
+          nuevaCategoria,
+      });
   } catch (error) {
     next(error);
   }
 };
 
-// PUT /api/v1/categorias-recurso/:id
-const updateCategoriaRecurso = async (req, res, next) => {
+const updateCategoriaRecurso = async (
+  req,
+  res,
+  next
+) => {
   try {
     const { id } = req.params;
 
-    const categoriaActualizada = await categoriaRecursoService.actualizar(
-      id,
-      req.body
+    const categoriaActualizada =
+      await categoriaRecursoService.actualizar(
+        id,
+        req.body
+      );
+
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message:
+          "Categoría de recurso actualizada correctamente",
+        data:
+          categoriaActualizada,
+      });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteCategoriaRecurso = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const { id } = req.params;
+
+    await categoriaRecursoService.eliminar(
+      id
     );
 
-    return res.status(200).json({
-      success: true,
-      message: "Categoría de recurso actualizada correctamente",
-      data: categoriaActualizada,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// DELETE /api/v1/categorias-recurso/:id
-const deleteCategoriaRecurso = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    await categoriaRecursoService.eliminar(id);
-
-    return res.status(200).json({
-      success: true,
-      message: "Categoría de recurso eliminada correctamente",
-    });
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message:
+          "Categoría de recurso eliminada correctamente",
+      });
   } catch (error) {
     next(error);
   }

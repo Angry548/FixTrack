@@ -8,6 +8,7 @@ import {
   deleteEmpleado,
   getEmpleadosByArea,
   assignRecurso,
+  returnRecurso,
 } from "../controllers/empleado.controller.js";
 
 import { autenticar } from "../middlewares/auth.middleware.js";
@@ -24,7 +25,10 @@ router.get(
   getEmpleadosByArea
 );
 
-router.get("/:id", getEmpleadoById);
+router.get(
+  "/:id",
+  getEmpleadoById
+);
 
 router.post(
   "/",
@@ -36,6 +40,12 @@ router.post(
   "/:id/asignaciones",
   autorizarRoles("administrador"),
   assignRecurso
+);
+
+router.delete(
+  "/:id/asignaciones/:asignacionId",
+  autorizarRoles("administrador"),
+  returnRecurso
 );
 
 router.put(

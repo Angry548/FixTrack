@@ -4,19 +4,34 @@ const usuarioSchema = new mongoose.Schema(
   {
     nombre: {
       type: String,
-      required: [true, "El nombre del usuario es obligatorio"],
+      required: [
+        true,
+        "El nombre del usuario es obligatorio",
+      ],
       trim: true,
-      minlength: [2, "El nombre debe tener al menos 2 caracteres"],
-      maxlength: [100, "El nombre no puede superar 100 caracteres"],
+      minlength: [
+        2,
+        "El nombre debe tener al menos 2 caracteres",
+      ],
+      maxlength: [
+        100,
+        "El nombre no puede superar 100 caracteres",
+      ],
     },
 
     correo: {
       type: String,
-      required: [true, "El correo es obligatorio"],
+      required: [
+        true,
+        "El correo es obligatorio",
+      ],
       trim: true,
       lowercase: true,
       unique: true,
-      maxlength: [150, "El correo no puede superar 150 caracteres"],
+      maxlength: [
+        150,
+        "El correo no puede superar 150 caracteres",
+      ],
       match: [
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         "El correo proporcionado no es válido",
@@ -25,13 +40,19 @@ const usuarioSchema = new mongoose.Schema(
 
     passwordHash: {
       type: String,
-      required: [true, "La contraseña es obligatoria"],
+      required: [
+        true,
+        "La contraseña es obligatoria",
+      ],
       select: false,
     },
 
     rol: {
       type: String,
-      required: [true, "El rol es obligatorio"],
+      required: [
+        true,
+        "El rol es obligatorio",
+      ],
       enum: {
         values: [
           "administrador",
@@ -46,7 +67,8 @@ const usuarioSchema = new mongoose.Schema(
     },
 
     empleadoId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type:
+        mongoose.Schema.Types.ObjectId,
       ref: "Empleado",
       unique: true,
       sparse: true,
@@ -64,19 +86,32 @@ const usuarioSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+
     toJSON: {
-      transform: function (doc, ret) {
+      transform: function (
+        doc,
+        ret
+      ) {
         delete ret.passwordHash;
+
         return ret;
       },
     },
+
     toObject: {
-      transform: function (doc, ret) {
+      transform: function (
+        doc,
+        ret
+      ) {
         delete ret.passwordHash;
+
         return ret;
       },
     },
   }
 );
 
-export default mongoose.model("Usuario", usuarioSchema);
+export default mongoose.model(
+  "Usuario",
+  usuarioSchema
+);

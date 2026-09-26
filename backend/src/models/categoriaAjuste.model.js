@@ -4,17 +4,34 @@ const categoriaAjusteSchema = new mongoose.Schema(
   {
     nombre: {
       type: String,
-      required: [true, "El nombre de la categoría de ajuste es obligatorio"],
+      required: [
+        true,
+        "El nombre de la categoría de ajuste es obligatorio",
+      ],
       trim: true,
-      minlength: [2, "El nombre debe tener al menos 2 caracteres"],
-      maxlength: [100, "El nombre no puede superar 100 caracteres"],
+      minlength: [
+        2,
+        "El nombre debe tener al menos 2 caracteres",
+      ],
+      maxlength: [
+        100,
+        "El nombre no puede superar 100 caracteres",
+      ],
       unique: true,
     },
 
     descripcion: {
       type: String,
       trim: true,
-      maxlength: [300, "La descripción no puede superar 300 caracteres"],
+      maxlength: [
+        300,
+        "La descripción no puede superar 300 caracteres",
+      ],
+    },
+
+    afectaDesecho: {
+      type: Boolean,
+      default: false,
     },
 
     activo: {

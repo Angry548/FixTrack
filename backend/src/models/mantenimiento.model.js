@@ -4,21 +4,21 @@ const detallePreventivoSchema = new mongoose.Schema(
   {
     frecuenciaDias: {
       type: Number,
-      required: [true, 'La frecuencia en días es obligatoria'],
-      min: [1, 'La frecuencia debe ser mayor que 0'],
+      required: [true, "La frecuencia en días es obligatoria"],
+      min: [1, "La frecuencia debe ser mayor que 0"],
       validate: {
         validator: Number.isInteger,
-        message: 'La frecuencia debe ser un número entero'
-      }
+        message: "La frecuencia debe ser un número entero",
+      },
     },
 
     proximaFechaProgramada: {
       type: Date,
-      required: [true, 'La próxima fecha programada es obligatoria']
-    }
+      required: [true, "La próxima fecha programada es obligatoria"],
+    },
   },
   {
-    _id: false
+    _id: false,
   }
 );
 
@@ -26,32 +26,47 @@ const detalleCorrectivoSchema = new mongoose.Schema(
   {
     horasTrabajadas: {
       type: Number,
-      required: [true, 'Las horas trabajadas son obligatorias'],
-      min: [0, 'Las horas trabajadas no pueden ser negativas']
+      required: [true, "Las horas trabajadas son obligatorias"],
+      min: [0, "Las horas trabajadas no pueden ser negativas"],
     },
 
     costoRepuestos: {
       type: mongoose.Schema.Types.Decimal128,
-      required: [true, 'El costo de repuestos es obligatorio'],
-      min: [0, 'El costo de repuestos no puede ser negativo']
+      required: [true, "El costo de repuestos es obligatorio"],
+      validate: {
+        validator(value) {
+          if (value === null || value === undefined) {
+            return false;
+          }
+
+          return Number(value.toString()) >= 0;
+        },
+        message: "El costo de repuestos no puede ser negativo",
+      },
     },
 
     detallesTecnicos: {
       type: String,
-      required: [true, 'Los detalles técnicos son obligatorios'],
+      required: [true, "Los detalles técnicos son obligatorios"],
       trim: true,
-      maxlength: [1000, 'Los detalles técnicos no pueden superar 1000 caracteres']
+      maxlength: [
+        1000,
+        "Los detalles técnicos no pueden superar 1000 caracteres",
+      ],
     },
 
     resolucionTecnica: {
       type: String,
-      required: [true, 'La resolución técnica es obligatoria'],
+      required: [true, "La resolución técnica es obligatoria"],
       trim: true,
-      maxlength: [1000, 'La resolución técnica no puede superar 1000 caracteres']
-    }
+      maxlength: [
+        1000,
+        "La resolución técnica no puede superar 1000 caracteres",
+      ],
+    },
   },
   {
-    _id: false
+    _id: false,
   }
 );
 
@@ -59,97 +74,104 @@ const mantenimientoSchema = new mongoose.Schema(
   {
     recursoId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Recurso',
-      required: [true, 'El recurso es obligatorio']
+      ref: "Recurso",
+      required: [true, "El recurso es obligatorio"],
+    },
+
+    cantidad: {
+      type: Number,
+      required: [true, "La cantidad en mantenimiento es obligatoria"],
+      default: 1,
+      min: [1, "La cantidad en mantenimiento debe ser mayor a 0"],
+      validate: {
+        validator: Number.isInteger,
+        message: "La cantidad en mantenimiento debe ser un número entero",
+      },
     },
 
     empleadoReportaId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Empleado',
-      required: [true, 'El empleado que reporta es obligatorio']
+      ref: "Empleado",
+      required: [true, "El empleado que reporta es obligatorio"],
     },
 
-    // Proveedor externo encargado del mantenimiento (opcional).
-    // No todos los mantenimientos requieren un proveedor externo,
-    // por ejemplo cuando lo resuelve personal interno.
+    tecnicoAsignadoId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Empleado",
+      default: null,
+    },
+
     proveedorId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Proveedor',
-      default: null
+      ref: "Proveedor",
+      default: null,
     },
 
     tipo: {
       type: String,
-      required: [true, 'El tipo de mantenimiento es obligatorio'],
+      required: [true, "El tipo de mantenimiento es obligatorio"],
       enum: {
-        values: ['incidencia', 'preventivo', 'correctivo'],
-        message:
-          'El tipo debe ser incidencia, preventivo o correctivo'
-      }
+        values: ["incidencia", "preventivo", "correctivo"],
+        message: "El tipo debe ser incidencia, preventivo o correctivo",
+      },
     },
 
     estado: {
       type: String,
-      required: [true, 'El estado es obligatorio'],
+      required: [true, "El estado es obligatorio"],
       enum: {
-        values: [
-          'notificado',
-          'en_proceso',
-          'corregido',
-          'programado'
-        ],
+        values: ["notificado", "en_proceso", "corregido", "programado"],
         message:
-          'El estado debe ser notificado, en_proceso, corregido o programado'
+          "El estado debe ser notificado, en_proceso, corregido o programado",
       },
-      default: 'notificado'
+      default: "notificado",
     },
 
     descripcionProblema: {
       type: String,
-      required: [true, 'La descripción del problema es obligatoria'],
+      required: [true, "La descripción del problema es obligatoria"],
       trim: true,
-      minlength: [5, 'La descripción debe tener al menos 5 caracteres'],
-      maxlength: [1000, 'La descripción no puede superar 1000 caracteres']
+      minlength: [5, "La descripción debe tener al menos 5 caracteres"],
+      maxlength: [
+        1000,
+        "La descripción no puede superar 1000 caracteres",
+      ],
     },
 
     fechaCreacion: {
       type: Date,
       required: true,
-      default: Date.now
+      default: Date.now,
     },
 
     fechaInicio: {
-      type: Date
+      type: Date,
     },
 
     fechaFinalizacion: {
-      type: Date
+      type: Date,
     },
 
     detallePreventivo: {
       type: detallePreventivoSchema,
-      default: undefined
+      default: undefined,
     },
 
     detalleCorrectivo: {
       type: detalleCorrectivoSchema,
-      default: undefined
-    }
+      default: undefined,
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-/*
- * Validaciones relacionadas entre campos.
- */
-
-mantenimientoSchema.pre('validate', function () {
+mantenimientoSchema.pre("validate", function () {
   if (this.fechaInicio && this.fechaInicio < this.fechaCreacion) {
     this.invalidate(
-      'fechaInicio',
-      'La fecha de inicio no puede ser anterior a la fecha de creación'
+      "fechaInicio",
+      "La fecha de inicio no puede ser anterior a la fecha de creación"
     );
   }
 
@@ -159,58 +181,58 @@ mantenimientoSchema.pre('validate', function () {
     this.fechaFinalizacion < this.fechaInicio
   ) {
     this.invalidate(
-      'fechaFinalizacion',
-      'La fecha de finalización no puede ser anterior a la fecha de inicio'
+      "fechaFinalizacion",
+      "La fecha de finalización no puede ser anterior a la fecha de inicio"
     );
   }
 
-  if (this.tipo === 'preventivo') {
+  if (this.tipo === "preventivo") {
     if (!this.detallePreventivo) {
       this.invalidate(
-        'detallePreventivo',
-        'El detalle preventivo es obligatorio para un mantenimiento preventivo'
+        "detallePreventivo",
+        "El detalle preventivo es obligatorio para un mantenimiento preventivo"
       );
     }
 
     if (this.detalleCorrectivo) {
       this.invalidate(
-        'detalleCorrectivo',
-        'Un mantenimiento preventivo no debe tener detalle correctivo'
+        "detalleCorrectivo",
+        "Un mantenimiento preventivo no debe tener detalle correctivo"
       );
     }
   }
 
-  if (this.tipo === 'correctivo') {
+  if (this.tipo === "correctivo") {
     if (!this.detalleCorrectivo) {
       this.invalidate(
-        'detalleCorrectivo',
-        'El detalle correctivo es obligatorio para un mantenimiento correctivo'
+        "detalleCorrectivo",
+        "El detalle correctivo es obligatorio para un mantenimiento correctivo"
       );
     }
 
     if (this.detallePreventivo) {
       this.invalidate(
-        'detallePreventivo',
-        'Un mantenimiento correctivo no debe tener detalle preventivo'
+        "detallePreventivo",
+        "Un mantenimiento correctivo no debe tener detalle preventivo"
       );
     }
   }
 
-  if (this.tipo === 'incidencia') {
+  if (this.tipo === "incidencia") {
     if (this.detallePreventivo) {
       this.invalidate(
-        'detallePreventivo',
-        'Una incidencia no debe tener detalle preventivo'
+        "detallePreventivo",
+        "Una incidencia no debe tener detalle preventivo"
       );
     }
 
     if (this.detalleCorrectivo) {
       this.invalidate(
-        'detalleCorrectivo',
-        'Una incidencia no debe tener detalle correctivo'
+        "detalleCorrectivo",
+        "Una incidencia no debe tener detalle correctivo"
       );
     }
   }
 });
 
-export default mongoose.model('Mantenimiento', mantenimientoSchema);
+export default mongoose.model("Mantenimiento", mantenimientoSchema);
